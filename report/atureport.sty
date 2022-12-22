@@ -50,6 +50,10 @@
 \usepackage{lastpage}
 % Styling the abstract.
 \usepackage{abstract}
+% Page colors.
+\usepackage{pagecolor}
+% Settings after this page.
+\usepackage{afterpage}
 
 % Various tikz libraries.
 % For drawing mind maps.
@@ -76,6 +80,7 @@
 \usetikzlibrary{calc}
 % For layering.
 \usetikzlibrary{backgrounds}
+
   
 % Set minted up.
 \usemintedstyle{vs}
@@ -111,4 +116,26 @@
 % For displaying a blank character.
 \newcommand{\bl}{\underline{\hspace{2mm}}}
 
+% Table of contents depth to subsection.
 \setcounter{tocdepth}{2}
+
+% Change title page.
+\makeatletter         
+\renewcommand\maketitle{
+  
+  \thispagestyle{empty}
+
+  \pagecolor{atugreen}\afterpage{\nopagecolor}
+  
+  \includegraphics[width=0.6\textwidth]{img/atu-teal.png}
+  \vspace{118mm}
+
+  \noindent \textbf{\Huge \sffamily \textcolor{atuteal}{\@title}}
+  \vspace{16mm}
+  
+  \noindent {\LARGE \sffamily \textcolor{atuteal}{\@author}} \\[4mm]
+  \noindent {\Large \sffamily \textcolor{atuteal}{\@date}}
+}
+\makeatother
+
+\AddToHook{cmd/section/before}{\clearpage}
