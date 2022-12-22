@@ -124,10 +124,13 @@ Figure \ref{fig:fourier} illustrates the Fourier Transform (FT): decomposition o
   \caption{Frequency and time domains of a signal.}
   \label{fig:fourier}
 \end{figure}
-
+\section{Practical Example of denoising audio signal}
 Let us put aside for the time being the difficulty of FT equations.
 Let us pretend that we fully get the meaning of the mathematical equations and apply the Fourier Transform to carry out some useful work in Python~\cite{CleanUpNoise}.
-We create two audio signals of different frequencies with the help of python coding as shown in Figure~\ref{fig:sixty} and Figure~\ref{fig:onefifty} and convolute them into single resultant signal named clean signal as shown in the Figure~\ref{fig:sumsignals}. 
+
+We create two audio signals of different frequencies with the help of python coding as shown in Figure~\ref{fig:sixty} and Figure~\ref{fig:onefifty} 
+and convolute them into single resultant signal named clean signal as shown in the Figure~\ref{fig:sumsignals}. 
+Both signals are the function of time-domain, their resultant and added noise are also the function of time-domain.
 
 \begin{figure}[H] 
   \centering
@@ -135,22 +138,6 @@ We create two audio signals of different frequencies with the help of python cod
   \caption{A 60Hz signal.}
   \label{fig:sixty}
 \end{figure}
-
-Figure~\ref{fig:sixty} was generated using the Python code in Listing~\ref{listing:sixty}.
-
-\begin{listing}[h]
-\begin{minted}{python}
-import numpy as np
-dt = 0.001
-t = np.arange(0.0, 1.0, dt)
-f1 = np.sin(2.0 * np.pi * 60.0 * t)
-plt.plot(t, f1, label='60Hz Signal')
-plt.legend()
-plt.show()
-\end{minted}
-\caption{Generating a 60Hz signal.}
-\label{listing:sixty}
-\end{listing}
 
 
 \begin{figure}[H] 
@@ -175,6 +162,22 @@ Then, we deliberately created a random noise signal with random frequency and im
   \caption{The noisy signal with original superimposed.}
   \label{fig:original_noisy}
 \end{figure}
+
+Figure~\ref{fig:sixty} was generated using the Python code in Listing~\ref{listing:sixty}.
+
+\begin{listing}[h]
+\begin{minted}{python}
+import numpy as np
+dt = 0.001
+t = np.arange(0.0, 1.0, dt)
+f1 = np.sin(2.0 * np.pi * 60.0 * t)
+plt.plot(t, f1, label='60Hz Signal')
+plt.legend()
+plt.show()
+\end{minted}
+\caption{Generating a 60Hz signal.}
+\label{listing:sixty}
+\end{listing}
 
 \begin{figure}[H] 
   \centering
