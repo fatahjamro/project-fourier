@@ -96,7 +96,7 @@ It breaks down a signal into its distinct spectral components, giving frequency 
 
 FFTs are used for machine or system condition monitoring, quality control, and fault analysis.
 This page covers the operation of an FFT, the pertinent parameters, and how they affect the measurement outcome.
-The FFT is efficient implementation of the DFT.
+The FFT is efficient implementation of the DFT~\cite{FFT}
 
 A signal is separated into its frequency components after being sampled over time.
 Each of these elements is a discrete sinusoidal oscillation with a unique frequency, amplitude, and phase.
@@ -132,7 +132,7 @@ Let us pretend that we fully get the meaning of the mathematical equations and a
 We create two audio signals of different frequencies with the help of python coding as shown in Figure~\ref{fig:sixty} and Figure~\ref{fig:onefifty} 
 and convolute them into single resultant signal named clean signal as shown in the Figure~\ref{fig:sumsignals}. 
 Both signals are the function of time-domain, their resultant and added noise are also the function of time-domain.
-
+\subsection{Generating of two signals and their convolution sum with random noise}
 \begin{figure}[H] 
   \centering
   \includegraphics[width=\textwidth]{img/signal_60hz.png}
@@ -154,6 +154,7 @@ Both signals are the function of time-domain, their resultant and added noise ar
   \caption{Sum of 60Hz and 150Hz signals.}
   \label{fig:sumsignals}
 \end{figure}
+\subsection{Adding some random noise to original signal}
 
 Then, we deliberately created a random noise signal with random frequency and superimposed on our clean audio signal as in Figure~\ref{fig:original_noisy}. 
 Figure~\ref{fig:time_to_freq} is the frequency-domain repesentation of Figure~\ref{fig:original_noisy}.
@@ -165,37 +166,102 @@ Figure~\ref{fig:time_to_freq} is the frequency-domain repesentation of Figure~\r
   \label{fig:original_noisy}
 \end{figure}
 
-Figure~\ref{fig:sixty} was generated using the Python code in Listing~\ref{listing:sixty}.
+Figure~\ref{fig:sixty} to Figure~\ref{fig:original_noisy} are generated using the Python code in Listing~\ref{listing:sixty}
 
 \begin{listing}[h]
-\begin{minted}{python}
-import numpy as np
-dt = 0.001
-t = np.arange(0.0, 1.0, dt)
-f1 = np.sin(2.0 * np.pi * 60.0 * t)
-plt.plot(t, f1, label='60Hz Signal')
-plt.legend()
-plt.show()
-\end{minted}
-\caption{Generating a 60Hz signal.}
-\label{listing:sixty}
-\end{listing}
+  \begin{minted}{python}
+ #importing libraries and setup
+  import numpy as np
+  import matplotlib.pyplot as plt
+  dt = 0.001 # frame difference 0.001
+  t = np.arange(0,1,dt) # time on x-axix
+  f1 = np.sin(2*np.pi*60*t) #first signal f1 60Hz
+  f2 = np.sin(2*np.pi*150*t) # second singal f2 150Hz
+  f_clean= f1 + f2 # suming f1 and f2
+  #add some random noise to the signal.
+  f = f_clean + 2.5*np.random.randn(len(t))
+  \end{minted}
+  \caption{Code for time domin signals.}
+  \label{listing:sixty}
+  \end{listing}
+  
+\subsection{Converting time domain signal to frequency domain}
 
+  In Figure~\ref{fig:time_to_freq}, is the noisy audio signal that needs to be filtered-out of noise.
+Here is the use of Fast Fourier Transform (FFT) to filter out the noise and get original signal back.
+  
 \begin{figure}[H] 
   \centering
   \includegraphics[width=\textwidth]{img/time_to_freq.png}
   \caption{The Frequency domain of the noisy signal.}
   \label{fig:time_to_freq}
 \end{figure}
-
-Above, in Figure~\ref{fig:time_to_freq}, is the noisy audio signal that needs to be filtered-out of noise.
-Here is the use of Fast Fourier Transform (FFT) to filter out the noise and get original signal back.
-
 Initially, the time domain signal is changed into frequency domain using algorithm we already discussed of; FFT algorithm.
 With the help of Fourier Transform it becomes easier to track frequencies and break signal into different frequencies.
 FFT algorithm is the efficient way to do that job.
 
-\newpage
+\begin{listing}[h]
+  \begin{minted}{python}
+  # Compute the Fast Fourier Transform (FFT)
+  n = len(t)
+  fhat = np.fft.fft(f,n)                     # Compute the FFT
+  PSD = fhat * np.conj(fhat) / n             # Power spectrum density (power per freq)
+  freq = (1/(dt*n)) * np.arange(n)           # Create x-axis of frequencies in Hz
+  L = np.arange(1,np.floor(n/2),dtype='int') # Only plot the first half of freqs
+  \end{minted}
+  \caption{Coverting time domain to frequency domian with FFT algorithm.}
+  \label{listing:time_to_freq}
+  \end{listing}
+
+  \subsection{Removing Noise by applying threshold}
+
+  This is the frequency domain signal where each spike represents a different frequency signal, 
+  It is easier to apply threshold to get rid of undesired signals.  
+  If we pick the frequencies that cross the index of 120 in y-axis, 
+  we can omit 99percent noise because the noise indices are very low. 
+  After applying the threshold of 120 we get the following signal, 
+  which is totally free from noise, as shown in the Figure~\ref{fig:denoise_freq}. 
+  It is still in frequency domain and can be converted back into time domain by doing inverse function of Fast Fourier Transform (IFFT)
+  \begin{figure}[H] 
+    \centering
+    \includegraphics[width=\textwidth]{img/denoise_freq.png}
+    \caption{The Frequency domain of the denoised signal.}
+    \label{fig:denoise_freq}
+  \end{figure}
+  
+  \begin{listing}[H]
+    \begin{minted}{python}
+    # Use the PSD (power spectral density) to filter out noise
+    indices = PSD > 120       # Find all freqs with large power
+    PSDclean = PSD * indices  # Zero out all others
+    fhat = indices * fhat     # Zero out small Fourier coeffs. in Y
+    ffilt = np.fft.ifft(fhat) # Inverse FFT for filtered time signal
+    \end{minted}
+    \caption{Noise removed in frequency domian by apply threshold PSD above 120 and inverse FFT.}
+    \label{listing:denoise_freq}
+    \end{listing}
+  \subsection{Reversing the frequency domian signal to time domain}
+
+    When we apply inverse FFT, we get signal in time domain which is almost identical to original convoluted summed signal 'f'.
+Looking at the fig.09, we can see the green signal that is original convolution of two signals f1 and f2. 
+The signal in blue is the filtered or recovered signal by removing noise. If both signals are compared there is not any difference and the information in signal is not lost. 
+The filtered signal is almost alike the original signal 
+\begin{figure}[H] 
+  \centering
+  \includegraphics[width=\textwidth]{img/fft_infft_signals.png}
+  \caption{Inverse FFT to covert back from frequency to time domain.}
+  \label{fig:fft_infft_signals}
+\end{figure}
+
+\section{Conculsion}
+We briefly, provided overview of fourier series, fourier transform and fast fourier transform (FFT). 
+After that, we explained FFT algorithm for a practical application of denoising the data signal. Taking the advantage of Python programing tool, we generated two different signals then added some random noise to it.
+then we proved with help of FFT and inverse FFT that the noise can be removed from data signals.\\
+FFT algorithm is the one of the best algorithm till today. 
+It is used in multiple problem solving approaches, like data cleaning, data analysing, data compression, analog and digital signal processing. It can also be used for mathematical modelling of PDEs and ODEs systems.
+Quantum Mechanics and Quantum Computing fields can make use of FFT algorithm at larger scale.
+
+    \newpage
 \bibliographystyle{IEEEtran}
 \bibliography{bibliography}
   
