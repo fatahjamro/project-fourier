@@ -54,6 +54,8 @@
 \usepackage{pagecolor}
 % Settings after this page.
 \usepackage{afterpage}
+% Line spacing.
+\usepackage{setspace}
 
 % Various tikz libraries.
 % For drawing mind maps.
@@ -81,7 +83,9 @@
 % For layering.
 \usetikzlibrary{backgrounds}
 
-  
+% One and a half spacing.
+\onehalfspacing
+
 % Set minted up.
 \usemintedstyle{vs}
 \setminted{frame=lines, framesep=2mm, baselinestretch=1.2, fontsize=\footnotesize, linenos}
@@ -123,14 +127,15 @@
 \makeatletter         
 \renewcommand\maketitle{
   
-  \thispagestyle{empty}
+  \thispagestyle{empty} 
 
   \pagecolor{atugreen}\afterpage{\nopagecolor}
   
   \includegraphics[width=0.6\textwidth]{img/atu-teal.png}
-  \vspace{118mm}
+  \vspace{80mm}
 
-  \noindent \textbf{\Huge \sffamily \textcolor{atuteal}{\@title}}
+  \noindent \textbf{\Huge \sffamily \textcolor{atuteal}{\@title}}\\[8mm]
+  \noindent {\Large \sffamily \textcolor{atuteal}{\@subtitle}} \\[4mm]
   \vspace{16mm}
   
   \noindent {\LARGE \sffamily \textcolor{atuteal}{\@author}} \\[4mm]
