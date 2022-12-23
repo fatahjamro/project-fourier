@@ -125,7 +125,11 @@ Figure \ref{fig:fourier} illustrates the Fourier Transform (FT): decomposition o
   \caption{Frequency and time domains of a signal. (Image source wikipedia)}
   \label{fig:fourier}
 \end{figure}
-\section{Practical Example of denoising audio signal}
+
+The wave function in red is the fourier sum of six other different waves shown in blue color. The Fourier Transform reveals the amplitudes summed sine waves.
+ Each bar on right side of the image shows a different frequency.  
+
+\section{Practical apllication of denoising audio signal}
 Let us put aside for the time being the difficulty of FT equations.
 Let us pretend that we fully get the meaning of the mathematical equations and apply the Fourier Transform to carry out some useful work in Python~\cite{CleanUpNoise}.
 
@@ -166,7 +170,7 @@ Figure~\ref{fig:time_to_freq} is the frequency-domain repesentation of Figure~\r
   \label{fig:original_noisy}
 \end{figure}
 
-Figure~\ref{fig:sixty} to Figure~\ref{fig:original_noisy} are generated using the Python code in Listing~\ref{listing:sixty}
+Figure~\ref{fig:sixty} to Figure~\ref{fig:original_noisy} are generated using the Python~\cite{fftnumpy} code in Listing~\ref{listing:sixty}
 
 \begin{listing}[h]
   \begin{minted}{python}
@@ -216,7 +220,7 @@ FFT algorithm is the efficient way to do that job.
   \subsection{Removing Noise by applying threshold}
 
   This is the frequency domain signal where each spike represents a different frequency signal, 
-  It is easier to apply threshold to get rid of undesired signals.  
+  It is easier to apply threshold to get rid of undesired signals~\cite{fftfilter}.  
   If we pick the frequencies that cross the index of 120 in y-axis, 
   we can omit 99percent noise because the noise indices are very low. 
   After applying the threshold of 120 we get the following signal, 
@@ -257,7 +261,7 @@ The filtered signal is almost alike the original signal
 We briefly, provided overview of fourier series, fourier transform and fast fourier transform (FFT). 
 After that, we explained FFT algorithm for a practical application of denoising the data signal. Taking the advantage of Python programing tool, we generated two different signals then added some random noise to it.
 then we proved with help of FFT and inverse FFT that the noise can be removed from data signals.\\
-FFT algorithm is the one of the best algorithm till today. 
+FFT algorithm is the one of the best algorithm till today~\cite{fftalg}. 
 It is used in multiple problem solving approaches, like data cleaning, data analysing, data compression, analog and digital signal processing. It can also be used for mathematical modelling of PDEs and ODEs systems.
 Quantum Mechanics and Quantum Computing fields can make use of FFT algorithm at larger scale.
 
