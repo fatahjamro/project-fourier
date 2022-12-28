@@ -83,6 +83,10 @@
 % For layering.
 \usetikzlibrary{backgrounds}
 
+% New page for each section.
+\DeclareOption{clearsection}{\AddToHook{cmd/section/before}{\clearpage}}
+\ProcessOptions\relax
+
 % One and a half spacing.
 \onehalfspacing
 
@@ -115,32 +119,27 @@
 \expandafter\def\csname PYGdefault@tok@err\endcsname{\def\PYGdefault@bc##1{{\strut ##1}}}
 \makeatother
 
-
-
-% For displaying a blank character.
-\newcommand{\bl}{\underline{\hspace{2mm}}}
-
 % Table of contents depth to subsection.
 \setcounter{tocdepth}{2}
 
 % Change title page.
 \makeatletter         
 \renewcommand\maketitle{
-  
+  % No number at bottom of page.
   \thispagestyle{empty} 
-
+  % Background of title page color - turn off after titlepage.
   \pagecolor{atugreen}\afterpage{\nopagecolor}
-  
+  % Logo.
   \includegraphics[width=0.6\textwidth]{img/atu-teal.png}
-  \vspace{80mm}
-
+  % Fill as much as possible, leaving room for below content.
+  \vfill
+  % Title.
   \noindent \textbf{\Huge \sffamily \textcolor{atuteal}{\@title}}\\[8mm]
-  \noindent {\Large \sffamily \textcolor{atuteal}{\@subtitle}} \\[4mm]
-  \vspace{16mm}
-  
-  \noindent {\LARGE \sffamily \textcolor{atuteal}{\@author}} \\[4mm]
+  % Subtitle.
+  \noindent {\Large \sffamily \textcolor{atuteal}{\@subtitle}} \\[8mm]
+  % Author.
+  \noindent {\LARGE \sffamily \textcolor{atuteal}{\@author}} \\[8mm]
+  % Date.
   \noindent {\Large \sffamily \textcolor{atuteal}{\@date}}
 }
 \makeatother
-
-\AddToHook{cmd/section/before}{\clearpage}

@@ -1,7 +1,7 @@
 \documentclass[a4paper, 12pt]{scrartcl}
 
 % Most of the preamble is in here.
-\usepackage{atureport}
+\usepackage[clearsection]{atureport}
 
 % Heading
 \title{Denoising Data Signals with\\[2mm] Fast Fourier Transforms using Python}
@@ -19,10 +19,7 @@
 \section*{}
 Thanks to my supervisor Dr Ian McLoughlin for help in editing and formatting this report and the associated work.
 
- 
 \tableofcontents
-
-
 
 \newpage
 
@@ -125,7 +122,7 @@ In the former, a discrete time-domain signal of length $N$ is transformed to a d
   x_n = \sum_{k=0}^{N-1} X_k e^{2 \pi i k n / N}
 \end{equation}
 
-
+ 
 In the frequency domain, data can be easily manipulated to, for instance, remove noise or apply data compression.
 Then, we can revert the manipulated frequency domain signal to the time domain by the inverse operation.
 
@@ -156,21 +153,21 @@ The resultant signal is thus also in the time domain.
 \subsection{Generating of two signals and their convolution sum with random noise}
 \begin{figure}[H] 
   \centering
-  \includegraphics[width=\textwidth]{img/signal_60hz.png}
+  \resizebox{\textwidth}{!}{\input{../notebooks/img/01_60hz_signal.pgf}}
   \caption{A 60Hz signal.}
   \label{fig:sixty}
 \end{figure}
 
 \begin{figure}[H] 
   \centering
-  \includegraphics[width=\textwidth]{img/signal_150hz.png}
+  \resizebox{\textwidth}{!}{\input{../notebooks/img/02_150hz_signal.pgf}}
   \caption{A 150Hz signal.}
   \label{fig:onefifty}
 \end{figure}
 
 \begin{figure}[H] 
   \centering
-  \includegraphics[width=\textwidth]{img/sum_signals.png}
+  \resizebox{\textwidth}{!}{\input{../notebooks/img/03_sum_signal.pgf}}
   \caption{Sum of 60Hz and 150Hz signals.}
   \label{fig:sumsignals}
 \end{figure}
@@ -183,7 +180,7 @@ This is depicted as the red line in Figure~\ref{fig:original_noisy}.
 We have superimposed the clean signal in green over it for comparison.
 \begin{figure}[H] 
   \centering
-  \includegraphics[width=\textwidth]{img/original_noisy.png}
+  \resizebox{\textwidth}{!}{\input{../notebooks/img/08_signal_and_noise.pgf}}
   \caption{The noisy signal with original superimposed.}
   \label{fig:original_noisy}
 \end{figure}
@@ -191,18 +188,26 @@ Figures~\ref{fig:sixty}, \ref{fig:onefifty}, and \ref{fig:original_noisy} are ge
 
 \begin{listing}[h]
   \begin{minted}{python}
- #importing libraries and setup
-  import numpy as np
-  import matplotlib.pyplot as plt
-  dt = 0.001 # frame difference 0.001
-  t = np.arange(0,1,dt) # time on x-axix
-  f1 = np.sin(2*np.pi*60*t) #first signal f1 60Hz
-  f2 = np.sin(2*np.pi*150*t) # second singal f2 150Hz
-  f_clean= f1 + f2 # suming f1 and f2
-  #add some random noise to the signal.
-  f = f_clean + 2.5*np.random.randn(len(t))
+# Numerical arrays.
+import numpy as np
+# Plotting.
+import matplotlib.pyplot as plt
+# Time step for discrete wave.
+dt = 0.0001
+# Array of time steps.
+t = np.arange(0.0, 0.1, dt)
+# Generate wave.
+f_1 = np.sin(2.0 * np.pi * 60.0 * t)
+# Generate wave.
+f_2 = np.sin(2.0 * np.pi * 150.0 * t)
+# Sum of waves.
+f = f_1 + f_2
+# Create some random noise.
+noise = np.random.normal(0.0, 2.5, t.shape)
+# Noisy signal.
+noisy_signal = signal + noise
   \end{minted}
-  \caption{Code for time domain signals.}
+  \caption{Simulating a Noisy Signal.}
   \label{listing:sixty}
   \end{listing}
   
@@ -212,7 +217,7 @@ Figure~\ref{fig:time_to_freq} shows the frequency-domain representation of Figur
 It depicts the noisy audio signal that needs to be filtered of noise.
 \begin{figure}[H] 
   \centering
-  \includegraphics[width=\textwidth]{img/time_to_freq.png}
+  \resizebox{\textwidth}{!}{\input{../notebooks/img/09_fft_of_noisy_signal.pgf}}
   \caption{The Frequency domain of the noisy signal.}
   \label{fig:time_to_freq}
 \end{figure}
@@ -221,14 +226,14 @@ With the help of the Fourier Transform it becomes easier to track frequencies an
 The FFT algorithm is the efficient way to do that job.
 \begin{listing}[h]
 \begin{minted}{python}
-# Compute the Fast Fourier Transform (FFT)
-n = len(t)
-fhat = np.fft.fft(f,n)                     # Compute the FFT
-PSD = fhat * np.conj(fhat) / n             # Power spectrum density (power per freq)
-freq = (1/(dt*n)) * np.arange(n)           # Create x-axis of frequencies in Hz
-L = np.arange(1,np.floor(n/2),dtype='int') # Only plot the first half of freqs
+# Fourier Transform.
+F = np.fft.fft(noisy_signal)
+# Frequency range.
+freq_range = np.fft.fftfreq(t.shape[0], dt)
+# Magnitudes.
+mag = np.abs(F)
 \end{minted}
-\caption{Converting time domain to frequency domain with FFT algorithm.}
+\caption{Applying the FFT.}
 \label{listing:time_to_freq}
 \end{listing}
 
@@ -241,7 +246,7 @@ If we pick the frequencies that cross the index of 120 in y-axis, we can omit 99
 After applying the threshold of 120 we get the following signal which is totally free from noise, as shown in the Figure~\ref{fig:denoise_freq}.
 \begin{figure}[H] 
   \centering
-  \includegraphics[width=\textwidth]{img/denoise_freq.png}
+  \resizebox{\textwidth}{!}{\input{../notebooks/img/10_fft_denoised.pgf}}
   \caption{The Frequency domain of the denoised signal.}
   \label{fig:denoise_freq}
 \end{figure}
@@ -249,11 +254,16 @@ It is still in frequency domain and can be converted back into time domain by do
 This is demonstrated in Listing~\ref{listing:denoise_freq}.
 \begin{listing}[H]
 \begin{minted}{python}
-# Use the PSD (power spectral density) to filter out noise
-indices = PSD > 120       # Find all freqs with large power
-PSDclean = PSD * indices  # Zero out all others
-fhat = indices * fhat     # Zero out small Fourier coeffs. in Y
-ffilt = np.fft.ifft(fhat) # Inverse FFT for filtered time signal
+# Set a threshold amplitude for keeping frequencies.
+amp = 250.0
+# Magnitudes/Absolute values of F.
+absF = np.abs(F)
+# Find frequencies above this amplitude.
+makescut = absF > amp
+# Copy F to keep the original.1
+Fcopy = F.copy()
+# Zero the frequencies not making the threshold.
+Fcopy[~makescut] = 0.0
 \end{minted}
 \caption{Noise removed in frequency domain, threshold PSD above 120}
 \label{listing:denoise_freq}
@@ -268,7 +278,7 @@ If both signals are compared there is not any difference and the information in 
 The filtered signal is almost alike the original signal.
 \begin{figure}[H] 
   \centering
-  \includegraphics[width=\textwidth]{img/fft_infft_signals.png}
+  \resizebox{\textwidth}{!}{\input{../notebooks/img/11_inverse_fft.pgf}}
   \caption{Inverse FFT to covert back from frequency to time domain.}
   \label{fig:fft_infft_signals}
 \end{figure}
